@@ -1,6 +1,5 @@
 # Contract Awards Data Analysis
 
-1. Business Understanding
 The World Bank Group's Corporate Procurement Unit is responsible for the coordination and oversight of the sourcing strategy, selection, and contract execution for goods, services, construction, and consulting services in over 150 offices around the world. In this project we will focus on the dataset provided by The World Bank Group's Corporate Procurement Unit.
 
 The objective of this project is to analyze dataset Corporate Procurement Contract Awards. The given dataset is used by the Corporate Procurement Unit while ensuring that procurement awards are consistent with procurement policies and procedures, as business units are accountable for the business need, expenditure policy, requirement specification, and supplier selection.
