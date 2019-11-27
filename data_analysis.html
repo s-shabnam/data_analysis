@@ -13077,21 +13077,30 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Corporate-Procurement-Contract-Awards-Data-Analyze">Corporate Procurement Contract Awards Data Analyze<a class="anchor-link" href="#Corporate-Procurement-Contract-Awards-Data-Analyze">&#182;</a></h1><p>The objective of this project is to analyze dataset Corporate Procurement Contract Awards available here: <a href="https://finances.worldbank.org/Procurement/Corporate-Procurement-Contract-Awards/a3d9-f9xv">https://finances.worldbank.org/Procurement/Corporate-Procurement-Contract-Awards/a3d9-f9xv</a></p>
-<p>Through this post we will try to find answers to the questions:
-Which are the top 10 counties that are most present in our dataset?
-Which are the top 10 contracts and the country with with the  largest award amount?
-Which are categories that get a larger amount of the award per contracts?
-Is there any link between the supplier contract numbers and the award amount?
-What are the words the most used to describe a contract?
-Is there any relationship between the contract description and the award amount?</p>
-<h2 id="Steps:">Steps:<a class="anchor-link" href="#Steps:">&#182;</a></h2><ul>
-<li>Load and cleaning data</li>
-<li>Save of cleaned dataset</li>
-<li>Tokenize data</li>
-<li>Train model to predict project award amount</li>
-<li>Check model metrics</li>
+<h1 id="Corporate-Procurement-Contract-Awards-Data-Analyze">Corporate Procurement Contract Awards Data Analyze<a class="anchor-link" href="#Corporate-Procurement-Contract-Awards-Data-Analyze">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="1.-Business-Understanding">1. Business Understanding<a class="anchor-link" href="#1.-Business-Understanding">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The World Bank Group's Corporate Procurement Unit is responsible for the coordination and oversight of the sourcing strategy, selection, and contract execution for goods, services, construction, and consulting services in over 150 offices around the world. In this project we will focus on the dataset provided by The World Bank Group's Corporate Procurement Unit.</p>
+<p>The objective of this project is to analyze dataset Corporate Procurement Contract Awards available here: <a href="https://finances.worldbank.org/Procurement/Corporate-Procurement-Contract-Awards/a3d9-f9xv">https://finances.worldbank.org/Procurement/Corporate-Procurement-Contract-Awards/a3d9-f9xv</a></p>
+<p>The given dataset is used by the Corporate Procurement Unit while ensuring that procurement awards are consistent with procurement policies and procedures, as business units are accountable for the business need, expenditure policy, requirement specification, and supplier selection.</p>
+<p>Through this post we will try to find answers to the questions:</p>
+<ul>
+<li>Q1. Is there any link between the supplier contract numbers and the award amount?</li>
+<li>Q2. What are the words the most used to describe a contract?</li>
+<li>Q3. Is there any relationship between the contract description and the award amount?</li>
 </ul>
+<p>In order to find answers to these questions we begin by importing the needed libraries.</p>
 
 </div>
 </div>
@@ -13099,13 +13108,13 @@ Is there any relationship between the contract description and the award amount?
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="0.-Prepare-environment">0. Prepare environment<a class="anchor-link" href="#0.-Prepare-environment">&#182;</a></h1>
+<h3 id="Prepare-environment">Prepare environment<a class="anchor-link" href="#Prepare-environment">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[98]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="k">import</span> <span class="n">SparkSession</span>
@@ -13123,7 +13132,7 @@ Is there any relationship between the contract description and the award amount?
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -13140,7 +13149,7 @@ Is there any relationship between the contract description and the award amount?
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create a SparkSession: note this step was left out of the screencast</span>
@@ -13157,7 +13166,7 @@ Is there any relationship between the contract description and the award amount?
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">spark_session</span> <span class="o">=</span> <span class="n">spark_session</span><span class="p">):</span>
@@ -13181,7 +13190,7 @@ Is there any relationship between the contract description and the award amount?
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">clean_data</span><span class="p">(</span><span class="n">data_df</span><span class="p">,</span> <span class="n">column_subset</span><span class="p">):</span>
@@ -13210,17 +13219,18 @@ Is there any relationship between the contract description and the award amount?
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="1.-Read-&amp;-Explore-data">1. Read &amp; Explore data<a class="anchor-link" href="#1.-Read-&amp;-Explore-data">&#182;</a></h1><p>Here we read input data from the file.</p>
+<h1 id="2.-Data-Understanding">2. Data Understanding<a class="anchor-link" href="#2.-Data-Understanding">&#182;</a></h1><p>Let's explore the data and understand its' specificities.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_path</span> <span class="o">=</span> <span class="s1">&#39;Corporate_Procurement_Contract_Awards.csv&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We begin with the load of the data.</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="s1">&#39;Corporate_Procurement_Contract_Awards.csv&#39;</span>
 </pre></div>
 
     </div>
@@ -13230,7 +13240,7 @@ Is there any relationship between the contract description and the award amount?
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
@@ -13243,7 +13253,7 @@ Is there any relationship between the contract description and the award amount?
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -13259,7 +13269,7 @@ Is there any relationship between the contract description and the award amount?
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt output_prompt">Out[9]:</div>
 
 
 
@@ -13277,14 +13287,14 @@ Is there any relationship between the contract description and the award amount?
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As we see the first row is a header, so lets filter it and clean the data.</p>
+<p>As we see the first row is a header, so let's filter it and clean the data.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Filter the header</span>
@@ -13298,91 +13308,13 @@ Is there any relationship between the contract description and the award amount?
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">clean_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>root
- |-- _c0: string (nullable = true)
- |-- _c1: string (nullable = true)
- |-- _c2: string (nullable = true)
- |-- _c3: string (nullable = true)
- |-- _c4: string (nullable = true)
- |-- _c5: string (nullable = true)
- |-- _c6: string (nullable = true)
- |-- _c7: string (nullable = true)
- |-- _c8: string (nullable = true)
- |-- _c9: string (nullable = true)
- |-- _c10: string (nullable = true)
- |-- _c11: string (nullable = true)
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Get dataset size</span>
-<span class="n">df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[12]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>1642</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -13436,6 +13368,40 @@ Is there any relationship between the contract description and the award amount?
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Get dataset size</span>
+<span class="n">df</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1642</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
@@ -13472,7 +13438,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s check the years covered by dataset. For this we&#39;ll use _c0=&#39;Award Date&#39; column.</span>
@@ -13524,7 +13490,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s find the supplier contries and the number of project per country in our dataset.</span>
@@ -13570,7 +13536,7 @@ only showing top 10 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[17]:</div>
+    <div class="prompt output_prompt">Out[18]:</div>
 
 
 
@@ -13596,7 +13562,7 @@ The list of top 10 countries with the highest number of contracts is displayed h
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">country_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;_c7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;_c7&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
@@ -13717,7 +13683,7 @@ The list of top 10 countries with the highest number of contracts is displayed h
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># let&#39;s dive in and check the contract descriptions beside the country, with largest award amount</span>
@@ -13773,13 +13739,13 @@ The list of top 10 countries with the highest number of contracts is displayed h
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Let's-check-the-commodity-categories:-_c2='Commodity-Category'">Let's check the commodity categories: _c2='Commodity Category'<a class="anchor-link" href="#Let's-check-the-commodity-categories:-_c2='Commodity-Category'">&#182;</a></h3>
+<h4 id="Let's-check-the-commodity-categories:-_c2='Commodity-Category'">Let's check the commodity categories: _c2='Commodity Category'<a class="anchor-link" href="#Let's-check-the-commodity-categories:-_c2='Commodity-Category'">&#182;</a></h4>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -13795,7 +13761,7 @@ The list of top 10 countries with the highest number of contracts is displayed h
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[29]:</div>
+    <div class="prompt output_prompt">Out[24]:</div>
 
 
 
@@ -13812,7 +13778,7 @@ The list of top 10 countries with the highest number of contracts is displayed h
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">commodity_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;_c2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;_c2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
@@ -13858,7 +13824,7 @@ The list of top 10 countries with the highest number of contracts is displayed h
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">commodity_df_pd</span> <span class="o">=</span> <span class="n">commodity_df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
@@ -13877,7 +13843,7 @@ The list of top 10 countries with the highest number of contracts is displayed h
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[32]:</div>
+    <div class="prompt output_prompt">Out[26]:</div>
 
 
 
@@ -13911,7 +13877,7 @@ The list of top 10 countries with the highest number of contracts is displayed h
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># let&#39;s check most expensive commodity categories </span>
@@ -13959,7 +13925,7 @@ only showing top 10 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s dive in and find the amount of award of contracts per category of the dataset</span>
@@ -14009,7 +13975,7 @@ only showing top 10 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">per_pice</span> <span class="o">=</span> <span class="n">udf</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="p">:</span><span class="n">x</span><span class="o">/</span><span class="n">y</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">())</span>
@@ -14022,7 +13988,7 @@ only showing top 10 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span> <span class="o">=</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">subset</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sum(_c9)&#39;</span><span class="p">])</span>
@@ -14038,7 +14004,7 @@ only showing top 10 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[37]:</div>
+    <div class="prompt output_prompt">Out[30]:</div>
 
 
 
@@ -14055,7 +14021,7 @@ only showing top 10 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_df</span> <span class="o">=</span> <span class="n">new_df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;pricePerCategory&#39;</span><span class="p">,</span><span class="n">per_pice</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;sum(_c9)&#39;</span><span class="p">),</span> <span class="n">col</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)))</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">desc</span><span class="p">(</span><span class="s1">&#39;pricePerCategory&#39;</span><span class="p">))</span>
@@ -14111,13 +14077,13 @@ only showing top 10 rows
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Let's-check-the-biggest-supplies-_c6='Supplier'">Let's check the biggest supplies _c6='Supplier'<a class="anchor-link" href="#Let's-check-the-biggest-supplies-_c6='Supplier'">&#182;</a></h3>
+<h4 id="Let's-check-the-biggest-supplies-_c6='Supplier'">Let's check the biggest supplies _c6='Supplier'<a class="anchor-link" href="#Let's-check-the-biggest-supplies-_c6='Supplier'">&#182;</a></h4>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Who are the suppliers with max contract numbers?</span>
@@ -14165,7 +14131,7 @@ only showing top 10 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Who are the suppliers with max contract amounts?</span>
@@ -14213,10 +14179,10 @@ only showing top 10 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s check the currelation between total award amount and contract numbers</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s check the correlation between total award amount and contract numbers</span>
 <span class="n">new_supplier_df</span> <span class="o">=</span> <span class="n">supplier_df</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">supplier_df_count</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">),</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;b._c6&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">col</span><span class="p">(</span><span class="s1">&#39;a._c6&#39;</span><span class="p">))</span><span class="o">.</span>\
                             <span class="n">select</span><span class="p">([</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;a.&#39;</span><span class="o">+</span><span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">supplier_df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;b.count&#39;</span><span class="p">)])</span>
 <span class="n">new_supplier_df</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
@@ -14262,7 +14228,7 @@ only showing top 10 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_supplier_df_pd</span> <span class="o">=</span> <span class="n">new_supplier_df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
@@ -14283,7 +14249,7 @@ only showing top 10 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[45]:</div>
+    <div class="prompt output_prompt">Out[35]:</div>
 
 
 
@@ -14318,7 +14284,14 @@ only showing top 10 rows
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As we see the total award amount of contracts of a supplier is not correlated with contracts' number.</p>
+<h3 id="Q1.-As-we-see-the-total-award-amount-of-contracts-of-a-supplier-is-not-correlated-with-contracts'-number.">Q1. As we see the total award amount of contracts of a supplier is not correlated with contracts' number.<a class="anchor-link" href="#Q1.-As-we-see-the-total-award-amount-of-contracts-of-a-supplier-is-not-correlated-with-contracts'-number.">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Lets continue with the text analysis of the description column _c3='Contract Description' in order to answer the orhers questions.</p>
 
 </div>
 </div>
@@ -14326,22 +14299,14 @@ only showing top 10 rows
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Lets continue with the text analysis of the description column _c3='Contract Description'.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="2.-Text-analysis">2. Text analysis<a class="anchor-link" href="#2.-Text-analysis">&#182;</a></h1><p>Lets continue with text analysis of the column contrat description.</p>
+<h1 id="3.-Prepare-Data">3. Prepare Data<a class="anchor-link" href="#3.-Prepare-Data">&#182;</a></h1><p>Lets continue with text analysis of the column contrat description.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">regexTokenizer</span> <span class="o">=</span> <span class="n">RegexTokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;_c3&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;wordList&quot;</span><span class="p">)</span>
@@ -14355,7 +14320,7 @@ only showing top 10 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_df</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -14394,7 +14359,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">stopWordsRemover</span> <span class="o">=</span> <span class="n">StopWordsRemover</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;wordList&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;cleanWordList&quot;</span><span class="p">)</span>
@@ -14408,7 +14373,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_text_length</span> <span class="o">=</span> <span class="n">udf</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">IntegerType</span><span class="p">())</span>
@@ -14421,7 +14386,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;DescriptionLength&#39;</span><span class="p">,</span> <span class="n">get_text_length</span><span class="p">(</span><span class="s1">&#39;cleanWordList&#39;</span><span class="p">))</span>
@@ -14434,7 +14399,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_df</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
@@ -14484,7 +14449,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[78]:</div>
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Get term frequency</span>
@@ -14504,7 +14469,7 @@ only showing top 3 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[78]:</div>
+    <div class="prompt output_prompt">Out[42]:</div>
 
 
 
@@ -14521,7 +14486,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[105]:</div>
+<div class="prompt input_prompt">In&nbsp;[43]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># What are the top 10 words the most used to describe a contract</span>
@@ -14538,7 +14503,7 @@ only showing top 3 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[105]:</div>
+    <div class="prompt output_prompt">Out[43]:</div>
 
 
 
@@ -14562,9 +14527,16 @@ only showing top 3 rows
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Q2.-Here-above-we-have-the-most-used-words-for-contract-description-in-the-dataset.">Q2. Here above we have the most used words for contract description in the dataset.<a class="anchor-link" href="#Q2.-Here-above-we-have-the-most-used-words-for-contract-description-in-the-dataset.">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[80]:</div>
+<div class="prompt input_prompt">In&nbsp;[44]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check bottom list of the term vocabylary</span>
@@ -14581,7 +14553,7 @@ only showing top 3 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[80]:</div>
+    <div class="prompt output_prompt">Out[44]:</div>
 
 
 
@@ -14607,10 +14579,10 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[81]:</div>
+<div class="prompt input_prompt">In&nbsp;[45]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Get Inverce Documenr Frequency</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Get the Inverce Document Frequency</span>
 <span class="n">idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;TF&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;TFIDF&quot;</span><span class="p">)</span>
 <span class="n">idfModel</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">new_df</span><span class="p">)</span>
 <span class="n">new_df</span> <span class="o">=</span> <span class="n">idfModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">new_df</span><span class="p">)</span>
@@ -14627,7 +14599,7 @@ only showing top 3 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[81]:</div>
+    <div class="prompt output_prompt">Out[45]:</div>
 
 
 
@@ -14644,7 +14616,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[83]:</div>
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TFIDF&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;Features&quot;</span><span class="p">)</span>
@@ -14658,7 +14630,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[84]:</div>
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -14674,13 +14646,13 @@ only showing top 3 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[84]:</div>
+    <div class="prompt output_prompt">Out[47]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Row(_c0=&#39;08/18/2014 12:00:00 AM&#39;, _c1=&#39;Q1 - FY15&#39;, _c2=&#39;CONSULTING&#39;, _c3=&#39;Hydropower Atlas&#39;, _c4=&#39;IBRD&#39;, _c5=&#39;1130310&#39;, _c6=&#39;AECOM Concultants Inc.&#39;, _c7=&#39;Canada&#39;, _c8=&#39;CA&#39;, _c9=598500.0, _c10=&#39;Trust Fund&#39;, _c11=&#39;GP- CCSA, Vice Presidency&#39;, year=&#39;2014&#39;, wordList=[&#39;hydropower&#39;, &#39;atlas&#39;], cleanWordList=[&#39;hydropower&#39;, &#39;atlas&#39;], DescriptionLength=2, TF=SparseVector(1000, {221: 1.0}), TFIDF=SparseVector(1000, {221: 5.0064}), idx_label=373.0, Features=SparseVector(1000, {221: 5.0064}))</pre>
+<pre>Row(_c0=&#39;08/18/2014 12:00:00 AM&#39;, _c1=&#39;Q1 - FY15&#39;, _c2=&#39;CONSULTING&#39;, _c3=&#39;Hydropower Atlas&#39;, _c4=&#39;IBRD&#39;, _c5=&#39;1130310&#39;, _c6=&#39;AECOM Concultants Inc.&#39;, _c7=&#39;Canada&#39;, _c8=&#39;CA&#39;, _c9=598500.0, _c10=&#39;Trust Fund&#39;, _c11=&#39;GP- CCSA, Vice Presidency&#39;, year=&#39;2014&#39;, wordList=[&#39;hydropower&#39;, &#39;atlas&#39;], cleanWordList=[&#39;hydropower&#39;, &#39;atlas&#39;], DescriptionLength=2, TF=SparseVector(1000, {221: 1.0}), TFIDF=SparseVector(1000, {221: 5.0064}), Features=SparseVector(1000, {221: 5.0064}))</pre>
 </div>
 
 </div>
@@ -14688,10 +14660,18 @@ only showing top 3 rows
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="4.-Data&#160;Modeling">4. Data&#160;Modeling<a class="anchor-link" href="#4.-Data&#160;Modeling">&#182;</a></h1><p>We split the dataset into 2 parts: for training and testing. For prediction, let's use LinearRegression and DecisionTreeRegressor create the regression models. We pass the data to the models to train and to predict results.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[85]:</div>
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">rest</span><span class="p">,</span> <span class="n">validation</span> <span class="o">=</span> <span class="n">new_df</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span>
@@ -14711,12 +14691,13 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[106]:</div>
+<div class="prompt input_prompt">In&nbsp;[49]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">featuresCol</span> <span class="o">=</span><span class="s1">&#39;Features&#39;</span><span class="p">,</span> <span class="n">labelCol</span> <span class="o">=</span> <span class="s1">&#39;_c9&#39;</span><span class="p">,</span> <span class="n">maxIter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">fitIntercept</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">)</span>
 <span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
 <span class="c1">#lrModel.coefficients</span>
+<span class="n">lrPredictions</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">validation</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14726,7 +14707,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[107]:</div>
+<div class="prompt input_prompt">In&nbsp;[50]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">r2</span>
@@ -14742,7 +14723,7 @@ only showing top 3 rows
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[107]:</div>
+    <div class="prompt output_prompt">Out[50]:</div>
 
 
 
@@ -14759,20 +14740,7 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[109]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrPredictions</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">validation</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[110]:</div>
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrPredictions</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
@@ -14813,7 +14781,6 @@ only showing top 3 rows
  |-- DescriptionLength: integer (nullable = true)
  |-- TF: vector (nullable = true)
  |-- TFIDF: vector (nullable = true)
- |-- idx_label: double (nullable = false)
  |-- Features: vector (nullable = true)
  |-- prediction: double (nullable = false)
 
@@ -14827,13 +14794,10 @@ only showing top 3 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[111]:</div>
+<div class="prompt input_prompt">In&nbsp;[56]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrPredictions</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span><span class="s2">&quot;Features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">lrEvaluator</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">)</span>
-<span class="n">rmse</span> <span class="o">=</span> <span class="n">lrEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lrPredictions</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Root Mean Squared Error (RMSE) on test data for linear regression = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">rmse</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14876,52 +14840,6 @@ only showing top 3 rows
 +--------------------+---------+--------------------+
 only showing top 20 rows
 
-Root Mean Squared Error (RMSE) on test data for linear regression = 9.8932e+06
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[118]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrEvaluator_r2</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;r2&quot;</span><span class="p">)</span>
-<span class="n">lr_r2</span> <span class="o">=</span> <span class="n">lrEvaluator_r2</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lrPredictions</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[119]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;R2 on test data for linear regression = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lr_r2</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>R2 on test data for linear regression = -0.00310965
 </pre>
 </div>
 </div>
@@ -14939,15 +14857,25 @@ Root Mean Squared Error (RMSE) on test data for linear regression = 9.8932e+06
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[112]:</div>
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeRegressor</span><span class="p">(</span><span class="n">featuresCol</span> <span class="o">=</span><span class="s1">&#39;Features&#39;</span><span class="p">,</span> <span class="n">labelCol</span> <span class="o">=</span> <span class="s1">&#39;_c9&#39;</span><span class="p">)</span>
 <span class="n">dtModel</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
 <span class="n">dtPredictions</span> <span class="o">=</span> <span class="n">dtModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">validation</span><span class="p">)</span>
-<span class="n">dtEvaluator</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">)</span>
-<span class="n">rmse</span> <span class="o">=</span> <span class="n">dtEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dtPredictions</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Root Mean Squared Error (RMSE) on test data for decision tree = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">rmse</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[54]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dtPredictions</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -14964,7 +14892,30 @@ Root Mean Squared Error (RMSE) on test data for linear regression = 9.8932e+06
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Root Mean Squared Error (RMSE) on test data for decision tree = 9.77069e+06
+<pre>root
+ |-- _c0: string (nullable = true)
+ |-- _c1: string (nullable = true)
+ |-- _c2: string (nullable = true)
+ |-- _c3: string (nullable = true)
+ |-- _c4: string (nullable = true)
+ |-- _c5: string (nullable = true)
+ |-- _c6: string (nullable = true)
+ |-- _c7: string (nullable = true)
+ |-- _c8: string (nullable = true)
+ |-- _c9: float (nullable = true)
+ |-- _c10: string (nullable = true)
+ |-- _c11: string (nullable = true)
+ |-- year: string (nullable = true)
+ |-- wordList: array (nullable = true)
+ |    |-- element: string (containsNull = true)
+ |-- cleanWordList: array (nullable = true)
+ |    |-- element: string (containsNull = true)
+ |-- DescriptionLength: integer (nullable = true)
+ |-- TF: vector (nullable = true)
+ |-- TFIDF: vector (nullable = true)
+ |-- Features: vector (nullable = true)
+ |-- prediction: double (nullable = false)
+
 </pre>
 </div>
 </div>
@@ -14975,7 +14926,7 @@ Root Mean Squared Error (RMSE) on test data for linear regression = 9.8932e+06
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[114]:</div>
+<div class="prompt input_prompt">In&nbsp;[53]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">dtPredictions</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span><span class="s2">&quot;Features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -15029,26 +14980,22 @@ only showing top 20 rows
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[120]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dtEvaluator_r2</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;r2&quot;</span><span class="p">)</span>
-<span class="n">dt_r2</span> <span class="o">=</span> <span class="n">dtEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dtPredictions</span><span class="p">)</span>
-</pre></div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="5.-Evaluate-the&#160;Results">5. Evaluate the&#160;Results<a class="anchor-link" href="#5.-Evaluate-the&#160;Results">&#182;</a></h1><p>We use RegressionEvaluator to evaluate the results of prediction by models lrModel and dtModel.</p>
 
-    </div>
 </div>
 </div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[121]:</div>
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;R2 on test data for decision tree = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">dt_r2</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrEvaluator</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">)</span>
+<span class="n">lr_rmse</span> <span class="o">=</span> <span class="n">lrEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lrPredictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Root Mean Squared Error (RMSE) on test data for linear regression = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lr_rmse</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15065,7 +15012,106 @@ only showing top 20 rows
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>R2 on test data for decision tree = 0.0215811
+<pre>Root Mean Squared Error (RMSE) on test data for linear regression = 9.8932e+06
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrEvaluator_r2</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;r2&quot;</span><span class="p">)</span>
+<span class="n">lr_r2</span> <span class="o">=</span> <span class="n">lrEvaluator_r2</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">lrPredictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;R2 on test data for linear regression = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lr_r2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>R2 on test data for linear regression = -0.00310965
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dtEvaluator</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">)</span>
+<span class="n">rmse</span> <span class="o">=</span> <span class="n">dtEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dtPredictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Root Mean Squared Error (RMSE) on test data for decision tree = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">rmse</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Root Mean Squared Error (RMSE) on test data for decision tree = 9.77069e+06
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dtEvaluator_r2</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;_c9&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;r2&quot;</span><span class="p">)</span>
+<span class="n">dt_r2</span> <span class="o">=</span> <span class="n">dtEvaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dtPredictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;R2 on test data for decision tree = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">dt_r2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>R2 on test data for decision tree = 9.77069e+06
 </pre>
 </div>
 </div>
@@ -15077,7 +15123,15 @@ only showing top 20 rows
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h3><p>After data exploration and model training we are able to answer to the last question. There is no correlation between the contract award amount and the contract description.</p>
+<h3 id="Q3.-Relationship-between-the-contract-description-and-the-award-amount">Q3. Relationship between the contract description and the award amount<a class="anchor-link" href="#Q3.-Relationship-between-the-contract-description-and-the-award-amount">&#182;</a></h3><p>From the accuracy obtained results of our two models we can conclude that to predict the contract award amount based on its description is not a very good idea. And actually these 2 information are not correlated.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h3><p>After data exploration and model training we are able to answer to the asked questions. There is no correlation between contract numbers and contract amounts as well as no relation between the contract award amount and the contract description.</p>
 
 </div>
 </div>
